@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Growin · Calculadora guiada de campañas</title>
+<style>
+:root{
+  --bg:#070511;--panel:#130d28;--panel2:#1d123b;--violet:#8c5cff;--gold:#f5d08a;
+  --text:#f8f5ff;--muted:#bcb4ce;--green:#59ddb7;--red:#ff7183;--amber:#ffc86f;
+  --cyan:#59bfff;--line:rgba(255,255,255,.12);--shadow:0 22px 70px rgba(0,0,0,.35)
+}
+*{box-sizing:border-box}
+html{background:var(--bg);scroll-behavior:smooth}
+body{margin:0;min-height:100vh;background:
+radial-gradient(circle at 10% 0%,rgba(125,67,255,.22),transparent 27%),
+radial-gradient(circle at 95% 8%,rgba(245,208,138,.09),transparent 24%),
+linear-gradient(145deg,#080513,#0d0820 55%,#070511);
+color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.wrap{width:min(1220px,calc(100% - 28px));margin:auto;padding:24px 0 72px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:20px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;color:var(--gold)}
+.mark{width:30px;height:30px;border-radius:10px;background:linear-gradient(145deg,var(--gold),#f2aa53);box-shadow:0 0 22px rgba(245,208,138,.22)}
+.back{color:#d7cfee;text-decoration:none;font-size:13px;border:1px solid var(--line);padding:8px 11px;border-radius:10px;background:rgba(255,255,255,.04)}
+.kicker{font-size:12px;letter-spacing:2.2px;text-transform:uppercase;color:var(--gold);font-weight:900}
+h1{font-size:clamp(35px,5vw,62px);line-height:1.02;letter-spacing:-2px;margin:8px 0 10px;max-width:980px}
+.lead{font-size:clamp(16px,2vw,21px);line-height:1.45;color:var(--muted);max-width:940px;margin:0 0 22px}
+.tutorial{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0 22px}
+.tut{border:1px solid rgba(255,255,255,.10);border-radius:14px;padding:12px;background:rgba(255,255,255,.025)}
+.tut b{display:block;color:var(--gold);font-size:13px;margin-bottom:3px}.tut span{font-size:12.5px;color:var(--muted);line-height:1.35}
+.grid{display:grid;grid-template-columns:.88fr 1.12fr;gap:18px;align-items:start}
+.card{border:1px solid rgba(140,92,255,.42);background:linear-gradient(180deg,rgba(29,18,59,.96),rgba(15,10,35,.97));border-radius:20px;padding:20px;box-shadow:var(--shadow)}
+.card.gold{border-color:rgba(245,208,138,.45)}
+.card h2{font-size:22px;margin:0 0 6px}.card h3{margin:0 0 10px;font-size:18px}
+.help{color:var(--muted);font-size:13px;line-height:1.4}
+.example{margin-top:8px;padding:9px 11px;border-left:3px solid var(--gold);border-radius:0 10px 10px 0;background:rgba(245,208,138,.055);font-size:12.5px;color:#e8dfef;line-height:1.4}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:16px}
+.field{display:flex;flex-direction:column;gap:7px}
+.field.full{grid-column:1/-1}
+label{font-size:13px;font-weight:850;color:#e6dff2}
+.field small{font-size:11.5px;color:var(--muted);line-height:1.35}
+input[type=number]{width:100%;padding:12px 13px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.13);border-radius:12px;color:white;font-size:16px;outline:none}
+input[type=number]:focus{border-color:rgba(245,208,138,.5);box-shadow:0 0 0 3px rgba(245,208,138,.08)}
+.toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 13px;border-radius:12px;border:1px solid rgba(255,255,255,.11);background:rgba(255,255,255,.035)}
+.toggle span{font-size:13px;font-weight:850}.toggle small{display:block;color:var(--muted);font-weight:500;margin-top:2px}
+.switch{position:relative;width:46px;height:26px;flex:0 0 auto}.switch input{opacity:0;width:0;height:0}.slider{position:absolute;inset:0;background:#3b3450;border-radius:999px;cursor:pointer}.slider:before{content:"";position:absolute;width:20px;height:20px;left:3px;top:3px;border-radius:50%;background:white;transition:.18s}.switch input:checked+.slider{background:linear-gradient(90deg,var(--violet),#a475ff)}.switch input:checked+.slider:before{transform:translateX(20px)}
+.date-preview{margin-top:10px;padding:11px 12px;border-radius:12px;border:1px solid rgba(89,191,255,.28);background:rgba(89,191,255,.055);font-size:13px;line-height:1.4;color:#e5e0f1}
+.date-preview b{color:#fff}
+.section{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
+.result-hero{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.metric{border:1px solid rgba(255,255,255,.10);border-radius:16px;background:rgba(255,255,255,.035);padding:14px}
+.metric .label{font-size:11px;text-transform:uppercase;letter-spacing:.9px;color:#b9b1cb;margin-bottom:5px}.metric .value{font-size:29px;font-weight:950}.metric .sub{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.35}
+.metric.cbo{border-color:rgba(245,208,138,.35)}.metric.abo{border-color:rgba(140,92,255,.45)}
+.status{border-radius:14px;padding:13px 14px;margin-top:12px;font-size:14px;line-height:1.4;border:1px solid var(--line)}
+.status.ok{background:rgba(89,221,183,.08);border-color:rgba(89,221,183,.35)}.status.warn{background:rgba(255,200,111,.08);border-color:rgba(255,200,111,.38)}.status.bad{background:rgba(255,113,131,.08);border-color:rgba(255,113,131,.4)}
+.status b{display:block;margin-bottom:3px}
+.plan-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
+.plan-head .badge{font-size:10px;text-transform:uppercase;letter-spacing:.8px;border:1px solid rgba(245,208,138,.35);color:var(--gold);border-radius:999px;padding:5px 8px;white-space:nowrap}
+.tree{margin-top:14px;border:1px solid rgba(255,255,255,.11);border-radius:17px;padding:14px;background:rgba(0,0,0,.12)}
+.root{text-align:center;border:1px solid rgba(245,208,138,.45);border-radius:14px;padding:11px 12px;background:linear-gradient(180deg,rgba(69,43,108,.88),rgba(34,22,64,.94));margin-bottom:12px}
+.root .small{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--gold)}.root strong{display:block;font-size:18px;margin-top:3px}
+.rows{display:grid;gap:8px}.row{display:grid;grid-template-columns:105px 1fr 126px;gap:9px;align-items:center;border:1px solid rgba(255,255,255,.09);border-radius:12px;padding:10px;background:rgba(255,255,255,.025)}
+.row .type{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:#a9a0ba}.row strong{font-size:13px}.row .when{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.35}.row .budget{text-align:right;font-size:11.5px;font-weight:900;color:var(--gold)}
+.optional{display:inline-block;margin-top:4px;color:var(--amber);font-size:9px;font-weight:900}
+.abo-list{display:grid;gap:7px;margin-top:10px}.abo-item{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:10px 11px;border-radius:12px;border:1px solid rgba(140,92,255,.24);background:rgba(140,92,255,.045)}.abo-item b{font-size:13px}.abo-item .detail{font-size:11px;color:var(--muted);margin-top:3px}.abo-item span{font-size:13px;color:var(--gold);font-weight:900}
+.actionbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.btn{border:1px solid rgba(255,255,255,.14);border-radius:11px;padding:10px 13px;background:rgba(255,255,255,.05);color:#fff;font-weight:850;cursor:pointer}.btn.primary{background:linear-gradient(135deg,var(--gold),#eab85a);color:#26172f;border-color:transparent}
+.note{font-size:12px;color:var(--muted);line-height:1.45;margin-top:12px}
+.walkthrough{margin-top:22px}
+.example-final{display:grid;grid-template-columns:.85fr 1.15fr;gap:14px;margin-top:12px}
+.example-box{border:1px solid rgba(255,255,255,.10);border-radius:15px;padding:13px;background:rgba(255,255,255,.025)}
+.example-box h4{margin:0 0 7px;color:var(--gold);font-size:14px}.example-box ul{margin:0;padding-left:18px;color:#ddd5e9;font-size:12.5px;line-height:1.55}
+@media(max-width:900px){.grid{grid-template-columns:1fr}.wrap{width:min(100% - 18px,760px);padding-top:16px}.top{margin-bottom:16px}.form{grid-template-columns:1fr}.result-hero,.tutorial,.example-final{grid-template-columns:1fr}.row{grid-template-columns:85px 1fr}.row .budget{grid-column:2;text-align:left}.card{padding:16px}h1{letter-spacing:-1.3px}}
+@media(max-width:480px){.result-hero{grid-template-columns:1fr}.back{font-size:11px}.row{grid-template-columns:1fr}.row .budget{grid-column:auto}.metric .value{font-size:25px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand"><div class="mark"></div>Growin</div>
+    <a class="back" href="/fechas-especiales">← Volver a la clase</a>
+  </div>
+
+  <div class="kicker">Fechas especiales · tutorial interactivo</div>
+  <h1>Calculadora guiada de <span style="color:var(--gold)">campañas y presupuesto</span></h1>
+  <p class="lead">No necesitás hacer cuentas ni acordarte del árbol. Completá lo que ya planificaste y te digo exactamente qué campañas crear, cuántos conjuntos hacer, qué fechas configurar y cuánto presupuesto cargar.</p>
+
+  <div class="tutorial">
+    <div class="tut"><b>1 · Completás</b><span>Presupuesto, días totales, extensión y cantidad de tests.</span></div>
+    <div class="tut"><b>2 · Yo calculo</b><span>Qué parte es fecha principal, qué parte extensión y cuánto presupuesto diario corresponde.</span></div>
+    <div class="tut"><b>3 · Copiás en Meta</b><span>Te queda el árbol con campaña, conjuntos, fechas y presupuesto exacto.</span></div>
+  </div>
+
+  <div class="grid">
+    <div class="card gold">
+      <h2>Paso a paso · completá esto</h2>
+      <div class="help">Cada campo tiene un ejemplo. Usá números reales de tu planificación.</div>
+
+      <div class="form">
+        <div class="field full">
+          <label>1. Presupuesto total para toda la fecha (USD)</label>
+          <input id="total" type="number" min="0" step="1" value="1000">
+          <small>Es todo lo que vas a invertir entre escala + testeo durante la fecha.</small>
+          <div class="example"><b>Ejemplo:</b> si decidiste invertir USD 1.000 entre Cyber + extensión, poné 1000.</div>
+        </div>
+
+        <div class="field">
+          <label>2. % destinado a testeo</label>
+          <input id="testPct" type="number" min="0" max="100" step="1" value="20">
+          <small>El resto se usa para CBO de escala.</small>
+          <div class="example"><b>Ejemplo:</b> 20 significa 20% ABO y 80% CBO.</div>
+        </div>
+
+        <div class="field">
+          <label>3. Días TOTALES de la fecha</label>
+          <input id="totalDays" type="number" min="1" step="1" value="7">
+          <small>Contá todos los días, incluyendo extensión si la vas a hacer.</small>
+          <div class="example"><b>Ejemplo:</b> Cyber 5 días + 2 de extensión = 7.</div>
+        </div>
+
+        <div class="field full">
+          <div class="toggle">
+            <div><span>4. ¿Planificaste extensión?</span><small>Si no, todos los conjuntos terminan dentro de los días totales.</small></div>
+            <label class="switch"><input id="extension" type="checkbox" checked><span class="slider"></span></label>
+          </div>
+        </div>
+
+        <div class="field" id="extStartField">
+          <label>5. ¿Qué día EMPIEZA la extensión?</label>
+          <input id="extensionStartDay" type="number" min="2" step="1" value="6">
+          <small>Ese día arranca el conjunto de extensión.</small>
+          <div class="example"><b>Ejemplo:</b> si los días 1–5 son Cyber y extendés días 6–7, poné 6.</div>
+        </div>
+
+        <div class="field">
+          <label>6. Creativos listos para testear</label>
+          <input id="testCreatives" type="number" min="0" step="1" value="6">
+          <small>Son los creativos que ya definiste en la clase anterior.</small>
+          <div class="example"><b>Ejemplo:</b> tenés 6 formatos/ángulos/productos pendientes → poné 6.</div>
+        </div>
+
+        <div class="field">
+          <label>7. Ángulos evergreen ganadores</label>
+          <input id="evergreen" type="number" min="0" step="1" value="2">
+          <small>Crearemos 1 conjunto evergreen por ángulo.</small>
+          <div class="example"><b>Ejemplo:</b> Oportunidad + problema/solución = 2 conjuntos.</div>
+        </div>
+
+        <div class="field">
+          <label>8. Si tenés creativos de cierre, ¿qué día empiezan?</label>
+          <input id="closeStartDay" type="number" min="0" step="1" value="4">
+          <small>Poné 0 si no tenés anuncios específicos de cierre/últimos días.</small>
+          <div class="example"><b>Ejemplo:</b> si corren días 4 y 5, poné 4. Se apagarán cuando arranque la extensión.</div>
+        </div>
+
+        <div class="field full">
+          <div class="toggle">
+            <div><span>9. ¿Agregar RMK dinámico?</span><small>Recomendado: público caliente + catálogo + copy.</small></div>
+            <label class="switch"><input id="rmk" type="checkbox" checked><span class="slider"></span></label>
+          </div>
+        </div>
+      </div>
+
+      <div class="date-preview" id="datePreview"></div>
+
+      <div class="actionbar">
+        <button class="btn primary" id="copyBtn">Copiar plan final</button>
+        <button class="btn" id="exampleBtn">Cargar ejemplo</button>
+        <button class="btn" id="resetBtn">Vaciar</button>
+      </div>
+      <div class="note">Regla de testeo: ideal <b>USD 10/día por anuncio</b>; mínimo <b>USD 5/día</b>. La extensión es solo escala, por eso la ABO se calcula hasta el último día de la fecha principal.</div>
+    </div>
+
+    <div class="card">
+      <h2>Tu plan listo para Meta</h2>
+      <div class="help">No tenés que interpretar nada: copiá esta estructura.</div>
+
+      <div class="result-hero section">
+        <div class="metric cbo"><div class="label">Presupuesto diario · CBO</div><div class="value" id="cboDaily">-</div><div class="sub" id="cboSub"></div></div>
+        <div class="metric abo"><div class="label">Presupuesto diario · cada conjunto ABO</div><div class="value" id="aboDaily">-</div><div class="sub" id="aboSub"></div></div>
+      </div>
+
+      <div id="testStatus" class="status ok"></div>
+
+      <div class="section">
+        <div class="plan-head"><div><h3>Campaña 1 · CBO ESCALA</h3><div class="help">Presupuesto a nivel campaña. Meta reparte entre conjuntos.</div></div><div class="badge">Capitalizar</div></div>
+        <div class="tree">
+          <div class="root"><div class="small">Campaña</div><strong>[FECHA] · CBO · ESCALA</strong><div class="help" id="cboTotalText"></div></div>
+          <div class="rows" id="cboRows"></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="plan-head"><div><h3>Campaña 2 · ABO TESTEO</h3><div class="help">1 conjunto = 1 anuncio. Presupuesto a nivel conjunto.</div></div><div class="badge">Aprender</div></div>
+        <div class="tree">
+          <div class="root"><div class="small">Campaña</div><strong>[FECHA] · ABO · TESTEO</strong><div class="help" id="aboTotalText"></div></div>
+          <div class="abo-list" id="aboList"></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Chequeos antes de publicar</h3>
+        <div id="checks"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card walkthrough">
+    <h2>Ejemplo completo · así se llena</h2>
+    <div class="help">Usamos el mismo ejemplo de los campos precargados.</div>
+    <div class="example-final">
+      <div class="example-box">
+        <h4>Lo que completó la persona</h4>
+        <ul>
+          <li>USD 1.000 de presupuesto total.</li>
+          <li>20% para testeo.</li>
+          <li>7 días totales.</li>
+          <li>Extensión desde el día 6.</li>
+          <li>6 creativos para testear.</li>
+          <li>2 ángulos evergreen.</li>
+          <li>Creativos de cierre desde el día 4.</li>
+          <li>RMK dinámico activo.</li>
+        </ul>
+      </div>
+      <div class="example-box">
+        <h4>Lo que debería devolver</h4>
+        <ul>
+          <li>Fecha principal: días 1–5. Extensión: días 6–7.</li>
+          <li>CBO: USD 800 total → USD 114,29/día durante 7 días.</li>
+          <li>CBO: 2 evergreen + 1 cierre + 1 extensión + 1 RMK.</li>
+          <li>ABO: USD 200 total sobre 5 días principales.</li>
+          <li>Con USD 10/día: 4 tests recomendados.</li>
+          <li>Creá 4 conjuntos ABO con 1 anuncio cada uno a USD 10/día.</li>
+          <li>Los otros 2 creativos quedan para otra tanda o requieren más presupuesto de testeo.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const money=v=>'USD '+Number(v||0).toFixed(2).replace(/\.00$/,'');
+const int=v=>Math.max(0,Math.floor(Number(v||0)));
+
+function read(){
+  const totalDays=Math.max(1,int($('totalDays').value)||1);
+  const ext=$('extension').checked;
+  let extStart=int($('extensionStartDay').value);
+  if(ext){ extStart=Math.min(totalDays,Math.max(2,extStart||2)); }
+  return {
+    total:Math.max(0,Number($('total').value||0)),
+    testPct:Math.min(100,Math.max(0,Number($('testPct').value||0))),
+    totalDays,
+    ext,
+    extStart,
+    testCreatives:int($('testCreatives').value),
+    evergreen:int($('evergreen').value),
+    closeStart:int($('closeStartDay').value),
+    rmk:$('rmk').checked
+  }
+}
+
+function calc(){
+  const x=read();
+  $('extStartField').style.display=x.ext?'flex':'none';
+
+  const mainDays=x.ext ? Math.max(1,x.extStart-1) : x.totalDays;
+  const extDays=x.ext ? (x.totalDays-x.extStart+1) : 0;
+  const mainEnd=mainDays;
+
+  $('datePreview').innerHTML=x.ext
+    ? '<b>La calculadora entiende:</b> fecha principal = días 1–'+mainEnd+' · extensión = días '+x.extStart+'–'+x.totalDays+' ('+extDays+' días).'
+    : '<b>La calculadora entiende:</b> una sola fecha de '+x.totalDays+' días, sin extensión.';
+
+  const testTotal=x.total*x.testPct/100;
+  const scaleTotal=x.total-testTotal;
+  const cboDaily=x.totalDays>0?scaleTotal/x.totalDays:0;
+
+  const maxComfort=Math.floor(testTotal/(mainDays*10));
+  const maxAbsolute=Math.floor(testTotal/(mainDays*5));
+  let rec=0;
+  if(x.testCreatives>0){
+    if(maxComfort>0) rec=Math.min(x.testCreatives,maxComfort);
+    else if(maxAbsolute>0) rec=Math.min(x.testCreatives,maxAbsolute);
+  }
+  if(x.testCreatives>0 && x.testCreatives<=maxComfort) rec=x.testCreatives;
+  const aboPerSet=rec>0?(testTotal/mainDays)/rec:0;
+
+  $('cboDaily').textContent=money(cboDaily);
+  $('cboSub').textContent=money(scaleTotal)+' total · '+x.totalDays+' días totales';
+  $('aboDaily').textContent=rec?money(aboPerSet):'No crear ABO';
+  $('aboSub').textContent=rec?rec+' conjuntos · días 1–'+mainEnd:money(testTotal)+' disponibles';
+
+  const status=$('testStatus');
+  if(testTotal===0 || x.testCreatives===0){
+    status.className='status warn';
+    status.innerHTML='<b>No necesitás campaña ABO con estos datos.</b> No hay presupuesto de testeo o no cargaste creativos.';
+  } else if(maxAbsolute===0){
+    status.className='status bad';
+    status.innerHTML='<b>No alcanza para testear ni 1 anuncio a USD 5/día.</b> Subí el presupuesto de testeo o no abras la ABO.';
+  } else if(x.testCreatives<=maxComfort){
+    status.className='status ok';
+    status.innerHTML='<b>Testeá los '+x.testCreatives+' creativos.</b> Cada conjunto recibe '+money((testTotal/mainDays)/x.testCreatives)+'/día durante '+mainDays+' días.';
+  } else if(maxComfort>0){
+    status.className='status warn';
+    status.innerHTML='<b>Recomendación: testeá '+maxComfort+' de tus '+x.testCreatives+' creativos.</b> Así cada uno recibe USD 10/día. Máximo absoluto a USD 5/día: '+maxAbsolute+'.';
+  } else {
+    status.className='status warn';
+    status.innerHTML='<b>Testeá '+rec+' creativo(s) con presupuesto mínimo.</b> Quedan '+money(aboPerSet)+'/día por conjunto.';
+  }
+
+  const rows=[];
+  for(let i=1;i<=x.evergreen;i++){
+    rows.push({
+      name:'Evergreen · Ángulo '+i,
+      when:'Inicio: día 1 · Fin: día '+x.totalDays,
+      ads:'Ganadores/reversiones de ese ángulo',
+      optional:false
+    });
+  }
+
+  if(x.closeStart>0){
+    let closeStart=Math.min(mainEnd,Math.max(1,x.closeStart));
+    rows.push({
+      name:'Cierre / últimos días',
+      when:'Inicio: día '+closeStart+' · Fin: día '+mainEnd,
+      ads:'Ganadores con mensaje de cierre/urgencia',
+      optional:true
+    });
+  }
+
+  if(x.ext){
+    rows.push({
+      name:'Extensión',
+      when:'Inicio: día '+x.extStart+' · Fin: día '+x.totalDays,
+      ads:'Solo ganadores adaptados a extensión',
+      optional:true
+    });
+  }
+
+  if(x.rmk){
+    rows.push({
+      name:'RMK dinámico',
+      when:'Inicio: día 1 · Fin: día '+x.totalDays,
+      ads:'Catálogo + copy · público caliente',
+      optional:false
+    });
+  }
+
+  $('cboRows').innerHTML=rows.length
+    ? rows.map(r=>'<div class="row"><div class="type">CONJUNTO'+(r.optional?'<div class="optional">OPCIONAL</div>':'')+'</div><div><strong>'+r.name+'</strong><div class="when">'+r.when+'<br><b>Anuncios:</b> '+r.ads+'</div></div><div class="budget">Sin presupuesto propio<br>lo asigna la CBO</div></div>').join('')
+    : '<div class="status warn"><b>No hay conjuntos de escala cargados.</b></div>';
+
+  $('cboTotalText').textContent=money(scaleTotal)+' total · '+money(cboDaily)+'/día a nivel campaña';
+
+  $('aboList').innerHTML=rec>0
+    ? Array.from({length:rec},(_,i)=>'<div class="abo-item"><div><b>Conjunto TEST '+String(i+1).padStart(2,'0')+'</b><div class="detail">Inicio: día 1 · Fin: día '+mainEnd+' · 1 anuncio</div></div><span>'+money(aboPerSet)+'/día</span></div>').join('')
+    : '<div class="status warn"><b>No crear campaña ABO.</b></div>';
+
+  $('aboTotalText').textContent=money(testTotal)+' total · '+mainDays+' días de testeo';
+
+  const needIdeal=x.testCreatives*mainDays*10;
+  const needMin=x.testCreatives*mainDays*5;
+  const checks=[];
+
+  checks.push('<div class="status '+(x.ext?'ok':'warn')+'"><b>Extensión: '+(x.ext?'SÍ':'NO')+'</b>'+
+    (x.ext?' El conjunto EXTENSIÓN empieza el día '+x.extStart+' y termina el '+x.totalDays+'. La ABO termina el día '+mainEnd+'.':' No crear conjunto EXTENSIÓN.')+'</div>');
+
+  if(x.closeStart>0){
+    checks.push('<div class="status ok"><b>Conjunto de cierre</b>Configuralo del día '+Math.min(mainEnd,Math.max(1,x.closeStart))+' al '+mainEnd+'. Se apaga antes de la extensión.</div>');
+  }else{
+    checks.push('<div class="status warn"><b>Sin conjunto de cierre</b>No cargaste creativos específicos de últimos días. No lo crees.</div>');
+  }
+
+  if(x.testCreatives>0){
+    const cls=testTotal>=needIdeal?'ok':testTotal>=needMin?'warn':'bad';
+    checks.push('<div class="status '+cls+'"><b>Capacidad de testeo</b>Para testear tus '+x.testCreatives+' creativos: ideal '+money(needIdeal)+' · mínimo '+money(needMin)+' de presupuesto total de testeo.</div>');
+  }
+
+  if(rec<x.testCreatives && rec>0){
+    checks.push('<div class="status warn"><b>No cargues todos los tests juntos.</b>Hacé '+rec+' ahora y dejá '+(x.testCreatives-rec)+' para otra tanda, o aumentá el presupuesto de testeo.</div>');
+  }
+
+  $('checks').innerHTML=checks.join('');
+
+  window.__plan={
+    ...x,mainDays,extDays,testTotal,scaleTotal,cboDaily,maxComfort,maxAbsolute,
+    recommended:rec,aboPerSet,rows
+  };
+}
+
+function summary(){
+  const p=window.__plan||{};
+  const lines=[
+    'PLAN DE CAMPAÑAS · FECHA ESPECIAL',
+    '',
+    'FECHAS',
+    '- Días totales: '+(p.totalDays||0),
+    '- Fecha principal: día 1 al '+(p.mainDays||0),
+    '- Extensión: '+(p.ext?'día '+p.extStart+' al '+p.totalDays:'No'),
+    '',
+    'CBO · ESCALA',
+    '- Presupuesto total: '+money(p.scaleTotal||0),
+    '- Presupuesto diario a nivel campaña: '+money(p.cboDaily||0),
+    '- Conjuntos:',
+    ...((p.rows||[]).map(r=>'  • '+r.name+' | '+r.when+' | '+r.ads)),
+    '',
+    'ABO · TESTEO',
+    '- Presupuesto total: '+money(p.testTotal||0),
+    '- Conjuntos recomendados: '+(p.recommended||0),
+    '- 1 anuncio por conjunto',
+    '- Presupuesto diario por conjunto: '+money(p.aboPerSet||0),
+    '- Fechas: día 1 al '+(p.mainDays||0)
+  ];
+  return lines.join('\n');
+}
+
+['total','testPct','totalDays','extension','extensionStartDay','testCreatives','evergreen','closeStartDay','rmk'].forEach(id=>{
+  $(id).addEventListener('input',calc);$(id).addEventListener('change',calc);
+});
+
+$('copyBtn').onclick=async()=>{
+  try{
+    await navigator.clipboard.writeText(summary());
+    $('copyBtn').textContent='Plan copiado ✓';
+    setTimeout(()=>$('copyBtn').textContent='Copiar plan final',1400);
+  }catch(e){ alert(summary()); }
+};
+
+$('exampleBtn').onclick=()=>{
+  $('total').value=1000;$('testPct').value=20;$('totalDays').value=7;$('extension').checked=true;$('extensionStartDay').value=6;$('testCreatives').value=6;$('evergreen').value=2;$('closeStartDay').value=4;$('rmk').checked=true;calc();
+};
+
+$('resetBtn').onclick=()=>{
+  $('total').value='';$('testPct').value='';$('totalDays').value='';$('extension').checked=false;$('extensionStartDay').value='';$('testCreatives').value='';$('evergreen').value='';$('closeStartDay').value='';$('rmk').checked=true;calc();
+};
+
+calc();
+</script>
+</body>
+</html>
